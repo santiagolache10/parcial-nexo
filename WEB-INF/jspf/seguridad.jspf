@@ -1,0 +1,10 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ include file="/WEB-INF/jspf/conexion.jspf" %>
+<c:if test="${empty sessionScope.idUsuario or empty sessionScope.rol}"><c:redirect url="/login.jsp"/></c:if>
+<sql:query var="cuentaActiva" dataSource="${db}">SELECT id FROM parcial_julian.usuarios WHERE id=CAST(? AS BIGINT) AND rol=CAST(? AS TEXT) AND activo=TRUE LIMIT 1
+ <sql:param value="${sessionScope.idUsuario}"/><sql:param value="${sessionScope.rol}"/>
+</sql:query>
+<c:if test="${cuentaActiva.rowCount ne 1}"><c:remove var="idUsuario" scope="session"/><c:remove var="rol" scope="session"/><c:redirect url="/login.jsp"/></c:if>

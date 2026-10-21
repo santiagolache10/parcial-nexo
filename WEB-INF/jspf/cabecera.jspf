@@ -1,0 +1,20 @@
+<%@ page pageEncoding="UTF-8" %>
+<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title><c:out value="${titulo}"/> · NEXO Académico</title><link rel="stylesheet" href="<c:url value='/assets/estilos.css'/>?v=4"></head><body>
+<div class="app"><aside class="sidebar" id="nexoSidebar">
+<div class="brand-wrap"><a class="brand" href="<c:url value='/panel.jsp'/>"><img class="sidebar-logo" alt="Identidad gráfica Ingeniería de Sistemas UTS" src="<c:url value='/assets/logo-uts.png'/>"><span class="brandname">NEXO<small>Gestión de anteproyectos</small></span></a><button type="button" class="sidebar-toggle" aria-label="Mostrar menú" onclick="document.body.classList.toggle('nav-compact')">☰</button></div>
+<div class="side-caption">MENÚ ACADÉMICO</div><nav aria-label="Menú principal">
+<a href="<c:url value='/panel.jsp'/>"><span class="ni">⌂</span>Inicio</a>
+<a href="<c:url value='/perfil.jsp'/>"><span class="ni">◎</span>Mi perfil</a>
+<c:if test="${sessionScope.rol eq 'ADMINISTRADOR'}"><a href="<c:url value='/usuarios.jsp'/>"><span class="ni">♙</span>Usuarios y permisos</a><a href="<c:url value='/auditoria.jsp'/>"><span class="ni">◷</span>Auditoría</a></c:if>
+<c:if test="${sessionScope.rol eq 'COORDINACION'}"><a href="<c:url value='/ideas.jsp'/>"><span class="ni">◈</span>Banco de ideas</a><a href="<c:url value='/asignaciones.jsp'/>"><span class="ni">♙</span>Asignaciones</a><a href="<c:url value='/reportes.jsp'/>"><span class="ni">▤</span>Informes</a><a href="<c:url value='/periodos.jsp'/>"><span class="ni">▦</span>Periodos</a><a href="<c:url value='/lineas.jsp'/>"><span class="ni">⌘</span>Grupos y líneas</a><a href="<c:url value='/decisiones.jsp'/>"><span class="ni">◇</span>Decisiones finales</a></c:if>
+<c:if test="${sessionScope.rol eq 'ESTUDIANTE'}"><a href="<c:url value='/ideas.jsp'/>"><span class="ni">◈</span>Explorar ideas</a><a href="<c:url value='/anteproyectos.jsp'/>"><span class="ni">▣</span>Mis anteproyectos</a><a href="<c:url value='/habilitacion.jsp'/>"><span class="ni">✓</span>Estado académico</a></c:if>
+<c:if test="${sessionScope.rol eq 'DIRECTOR' or sessionScope.rol eq 'EVALUADOR'}"><a href="<c:url value='/revisiones.jsp'/>"><span class="ni">✎</span>Mis revisiones</a><a href="<c:url value='/rubrica.jsp'/>"><span class="ni">▦</span>Rejilla de evaluación</a></c:if>
+<c:if test="${sessionScope.rol ne 'ADMINISTRADOR'}"><a href="<c:url value='/proyectos.jsp'/>"><span class="ni">▥</span>Expedientes</a></c:if>
+<a href="<c:url value='/practicas.jsp'/>"><span class="ni">▧</span>Prácticas empresariales</a>
+<a href="<c:url value='/calendario.jsp'/>"><span class="ni">▦</span>Calendario académico</a>
+<a href="<c:url value='/formatos.jsp'/>"><span class="ni">▤</span>Formatos de grado</a>
+<a href="<c:url value='/notificaciones.jsp'/>"><span class="ni">♧</span>Notificaciones</a>
+</nav><div class="sidebar-foot"><span class="avatar">JL</span><span class="user-meta"><strong><c:out value="${sessionScope.nombre}"/></strong><small><c:out value="${sessionScope.rol}"/></small></span></div>
+</aside><main class="main"><header class="topbar"><div class="bread"><span class="topbar-kicker">UTS / INGENIERÍA DE SISTEMAS</span><strong>Portal NEXO</strong></div><div class="topbar-right"><span class="top-status"><i></i> Sesión activa</span><a href="<c:url value='/salir.jsp'/>">Cerrar sesión ↗</a></div></header>
+<section class="workspace"><div class="page-title"><div><div class="eyebrow accent">SEGUIMIENTO ACADÉMICO</div><h1><c:out value="${titulo}"/></h1><c:if test="${not empty subtitulo}"><p><c:out value="${subtitulo}"/></p></c:if></div><span class="pill role-pill"><c:out value="${sessionScope.rol}"/></span></div>

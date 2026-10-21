@@ -1,0 +1,12 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ include file="/WEB-INF/jspf/seguridad.jspf" %>
+<c:if test="${sessionScope.rol eq 'COORDINACION' and pageContext.request.method eq 'POST' and param.csrf eq sessionScope.csrf}"><c:catch var="errFecha"><sql:update dataSource="${db}">INSERT INTO parcial_julian.calendario(evento,inicio,fin) VALUES(?,CAST(? AS DATE),CAST(? AS DATE))<sql:param value="${param.evento}"/><sql:param value="${param.inicio}"/><sql:param value="${param.fin}"/></sql:update></c:catch><c:if test="${empty errFecha}"><c:redirect url="/calendario.jsp?ok=1"/></c:if></c:if>
+<sql:query var="fechas" dataSource="${db}">SELECT * FROM parcial_julian.calendario ORDER BY inicio ASC</sql:query>
+<c:set var="titulo" value="Calendario académico"/><c:set var="subtitulo" value="Fechas importantes para entregar y evaluar anteproyectos."/>
+<%@ include file="/WEB-INF/jspf/cabecera.jspf" %>
+<c:if test="${sessionScope.rol eq 'COORDINACION'}"><section class="panel"><h2>Agregar fecha académica</h2><form method="post" class="form-grid"><input type="hidden" name="csrf" value="${sessionScope.csrf}"/><label class="span2">Actividad<input name="evento" maxlength="220" required/></label><label>Inicio<input type="date" name="inicio" required/></label><label>Fin<input type="date" name="fin" required/></label><div class="span2"><button class="primary">Registrar actividad</button></div></form></section></c:if><div class="panel"><h2>Actividades programadas</h2><div class="calendar-items"><c:forEach items="${fechas.rows}" var="f"><div class="calendar-event"><div class="datebox"><strong><fmt:formatDate value="${f.inicio}" pattern="dd"/></strong><small><fmt:formatDate value="${f.inicio}" pattern="MMM"/></small></div><div><h3><c:out value="${f.evento}"/></h3><p>Del <fmt:formatDate value="${f.inicio}" pattern="dd/MM/yyyy"/> al <fmt:formatDate value="${f.fin}" pattern="dd/MM/yyyy"/></p></div><span class="chip">Programado</span></div></c:forEach>
+<c:if test="${fechas.rowCount eq 0}"><p class="empty-note">El calendario no tiene fechas registradas.</p></c:if></div><div class="info-note">Las fechas precargadas son de ejemplo y deben confirmarse con Coordinación antes de usarlas oficialmente.</div></div>
+<%@ include file="/WEB-INF/jspf/pie.jspf" %>

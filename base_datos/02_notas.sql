@@ -1,0 +1,3 @@
+-- Estas son cuentas ficticias exclusivamente para demostración; cambiar claves tras la prueba.
+-- El sistema puede crear las tablas y los registros al visitar login.jsp.
+-- Usuarios iniciales y contraseñas están documentados en GUIA_LEEME.txt.

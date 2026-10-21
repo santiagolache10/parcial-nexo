@@ -1,0 +1,19 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ include file="/WEB-INF/jspf/seguridad.jspf" %>
+<c:if test="${sessionScope.rol ne 'COORDINACION'}"><c:redirect url="/panel.jsp"/></c:if>
+
+<c:if test="${pageContext.request.method eq 'POST' and not empty sessionScope.csrf and param.csrf eq sessionScope.csrf}"><c:catch var="operacionError">
+<c:choose>
+<c:when test="${param.accion eq 'crear'}"><sql:update dataSource="${db}">INSERT INTO parcial_julian.periodos(nombre,inicio,fin,apertura_ideas,cierre_ideas,estado) VALUES(?,CAST(? AS DATE),CAST(? AS DATE),CAST(NULLIF(CAST(? AS TEXT),'') AS DATE),CAST(NULLIF(CAST(? AS TEXT),'') AS DATE),'ABIERTO')<sql:param value="${param.nombre}"/><sql:param value="${param.inicio}"/><sql:param value="${param.fin}"/><sql:param value="${param.apertura}"/><sql:param value="${param.cierre}"/></sql:update></c:when>
+<c:when test="${param.accion eq 'estado'}"><sql:update dataSource="${db}">UPDATE parcial_julian.periodos SET estado=CASE WHEN estado='ABIERTO' THEN 'CERRADO' ELSE 'ABIERTO' END WHERE id=CAST(? AS BIGINT)<sql:param value="${param.id}"/></sql:update></c:when></c:choose>
+<sql:update dataSource="${db}">INSERT INTO parcial_julian.auditoria(usuario_id,entidad,accion,detalle) VALUES(CAST(? AS BIGINT),CAST(? AS TEXT),CAST(? AS TEXT),CAST(? AS TEXT))
+<sql:param value="${sessionScope.idUsuario}"/><sql:param value="periodos"/><sql:param value="${param.accion}"/><sql:param value="${param.nombre}"/></sql:update></c:catch><c:if test="${empty operacionError}"><c:redirect url="/periodos.jsp?ok=1"/></c:if></c:if>
+<sql:query var="p" dataSource="${db}">SELECT * FROM parcial_julian.periodos ORDER BY inicio DESC</sql:query>
+<c:set var="titulo" value="Periodos académicos"/><c:set var="subtitulo" value="Vigencias de ideas y calendario de recepción de anteproyectos."/><%@ include file="/WEB-INF/jspf/cabecera.jspf" %>
+<c:if test="${not empty operacionError}"><div class="alert bad">No fue posible guardar el periodo. Comprueba las fechas y la unicidad del nombre.</div></c:if>
+<div class="split"><section class="panel"><h2>Nuevo periodo</h2><form method="post" class="form-grid"><input type="hidden" name="csrf" value="${sessionScope.csrf}"/><input type="hidden" name="accion" value="crear"/><label class="span2">Nombre<input name="nombre" required placeholder="2027-1" maxlength="90"/></label><label>Inicio<input type="date" name="inicio" required/></label><label>Final<input type="date" name="fin" required/></label><label>Inicio de ideas<input type="date" name="apertura"/></label><label>Cierre de ideas<input type="date" name="cierre"/></label><div class="span2 actions"><button class="primary">Registrar periodo</button></div></form></section>
+<section class="panel"><h2>Periodos registrados</h2><div class="table-wrap"><table><thead><tr><th>Periodo</th><th>Vigencia</th><th>Banco de ideas</th><th>Estado</th><th>Acciones</th></tr></thead><tbody><c:forEach items="${p.rows}" var="r"><tr><td><strong><c:out value="${r.nombre}"/></strong></td><td><c:out value="${r.inicio}"/> al <c:out value="${r.fin}"/></td><td><c:out value="${r.apertura_ideas}"/> a <c:out value="${r.cierre_ideas}"/></td><td><span class="chip ${r.estado eq 'ABIERTO'?'green':'gray'}"><c:out value="${r.estado}"/></span></td><td><form method="post" class="inline" data-confirm="¿Cambiar la vigencia de este periodo?"><input type="hidden" name="csrf" value="${sessionScope.csrf}"/><input type="hidden" name="accion" value="estado"/><input type="hidden" name="id" value="${r.id}"/><button class="btn small" type="submit">Alternar estado</button></form></td></tr></c:forEach></tbody></table></div></section></div>
+<%@ include file="/WEB-INF/jspf/pie.jspf" %>

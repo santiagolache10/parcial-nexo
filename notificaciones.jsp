@@ -1,0 +1,10 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ include file="/WEB-INF/jspf/seguridad.jspf" %>
+
+<c:if test="${pageContext.request.method eq 'POST' and not empty sessionScope.csrf and param.csrf eq sessionScope.csrf}"><sql:update dataSource="${db}">UPDATE parcial_julian.notificaciones SET leida=TRUE WHERE id=CAST(? AS BIGINT) AND usuario_id=CAST(? AS BIGINT)<sql:param value="${param.id}"/><sql:param value="${sessionScope.idUsuario}"/></sql:update><c:redirect url="/notificaciones.jsp"/></c:if>
+<sql:query var="mensajes" dataSource="${db}">SELECT * FROM parcial_julian.notificaciones WHERE usuario_id=CAST(? AS BIGINT) ORDER BY fecha DESC LIMIT 100<sql:param value="${sessionScope.idUsuario}"/></sql:query>
+<c:set var="titulo" value="Notificaciones"/><c:set var="subtitulo" value="Avisos de evaluación, entrega y decisiones de anteproyectos."/><%@ include file="/WEB-INF/jspf/cabecera.jspf" %>
+<section class="panel"><h2>Bandeja de avisos</h2><c:choose><c:when test="${mensajes.rowCount eq 0}"><p class="empty-note">Todavía no tienes notificaciones.</p></c:when><c:otherwise><c:forEach items="${mensajes.rows}" var="n"><div class="link-card"><div><span class="chip ${n.leida?'gray':'green'}">${n.leida?'Leída':'Nueva'}</span> <strong><c:out value="${n.mensaje}"/></strong><p class="muted"><fmt:formatDate value="${n.fecha}" pattern="dd/MM/yyyy HH:mm"/></p></div><div class="actions"><c:if test="${not empty n.anteproyecto_id}"><a class="btn small" href="<c:url value='/detalle.jsp'><c:param name='id' value='${n.anteproyecto_id}'/></c:url>">Ver proyecto</a></c:if><c:if test="${not n.leida}"><form method="post"><input type="hidden" name="csrf" value="${sessionScope.csrf}"/><input type="hidden" name="id" value="${n.id}"/><button class="btn small" type="submit">Marcar como leída</button></form></c:if></div></div></c:forEach></c:otherwise></c:choose></section><%@ include file="/WEB-INF/jspf/pie.jspf" %>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="3.1">
+  <display-name>NEXO | Proyecto de Julián Santiago Lache Leguízamo</display-name>
+  <context-param><param-name>DB_URL</param-name><param-value>jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require&amp;currentSchema=parcial_julian,public&amp;connectTimeout=12&amp;socketTimeout=35&amp;tcpKeepAlive=true</param-value></context-param>
+  <context-param><param-name>DB_USER</param-name><param-value>postgres.fdsfceqfkpkxsqgtwwrb</param-value></context-param>
+  <context-param><param-name>DB_PASSWORD</param-name><param-value>Pulsar2219*@</param-value></context-param>
+  <!-- Tomcat 8.5: interpreta los parámetros POST en UTF-8 antes de que JSP/JSTL los lea. -->
+  <filter>
+    <filter-name>utf8Formulario</filter-name>
+    <filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
+    <init-param><param-name>encoding</param-name><param-value>UTF-8</param-value></init-param>
+    <init-param><param-name>ignore</param-name><param-value>false</param-value></init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>utf8Formulario</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <session-config><session-timeout>30</session-timeout><cookie-config><http-only>true</http-only></cookie-config></session-config>
+  <welcome-file-list><welcome-file>index.jsp</welcome-file></welcome-file-list>
+</web-app>
